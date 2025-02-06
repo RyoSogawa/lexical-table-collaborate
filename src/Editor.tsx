@@ -9,6 +9,7 @@ import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
+import TableCellResizer from "./plugins/TableCellResizer";
 import {
   INSERT_TABLE_COMMAND,
   TableCellNode,
@@ -18,7 +19,8 @@ import {
 import type { EditorThemeClasses, LexicalEditor } from "lexical";
 import { useRef } from "react";
 
-const theme: EditorThemeClasses = {};
+const theme: EditorThemeClasses = {
+};
 
 const onError = (error: Error) => {
   console.error(error);
@@ -53,6 +55,7 @@ const Editor = () => {
         <HistoryPlugin />
         <AutoFocusPlugin />
         <TablePlugin />
+        <TableCellResizer />
       </LexicalComposer>
       <button type="button" onClick={handleInsertTable}>
         Insert Table
