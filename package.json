@@ -4,9 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "concurrently \"vite\" \"pnpm:server:ws\"",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
+    "server:ws": "HOST=0.0.0.0 PORT=1234 YPERSISTENCE=./yjs-wss-db npx y-websocket",
     "lint": "biome lint --write ./src",
     "format": "biome format --write ./src"
   },
@@ -14,15 +15,19 @@
     "@lexical/react": "^0.23.1",
     "@lexical/table": "^0.23.1",
     "@lexical/utils": "^0.23.1",
+    "@lexical/yjs": "^0.23.1",
     "lexical": "^0.23.1",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "y-websocket": "^2.1.0",
+    "yjs": "^13.6.23"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react-swc": "^3.5.0",
+    "concurrently": "^9.1.2",
     "globals": "^15.14.0",
     "typescript": "~5.6.2",
     "typescript-eslint": "^8.18.2",

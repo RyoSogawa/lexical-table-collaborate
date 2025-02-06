@@ -17,18 +17,35 @@ import {
   TableRowNode,
 } from "@lexical/table";
 import type { EditorThemeClasses, LexicalEditor } from "lexical";
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
+import * as Y from "yjs";
+import { Provider } from "@lexical/yjs";
+import { WebsocketProvider } from "y-websocket";
+import { CollaborationPlugin } from "@lexical/react/LexicalCollaborationPlugin";
 
-const theme: EditorThemeClasses = {
-};
+const theme: EditorThemeClasses = {};
 
 const onError = (error: Error) => {
   console.error(error);
 };
 
+const getDocFromMap = (id: string, yjsDocMap: Map<string, Y.Doc>): Y.Doc => {
+  let doc = yjsDocMap.get(id);
+
+  if (doc === undefined) {
+    doc = new Y.Doc();
+    yjsDocMap.set(id, doc);
+  } else {
+    doc.load();
+  }
+
+  return doc;
+};
+
 const Editor = () => {
   const editorRef = useRef<LexicalEditor>(null);
   const initialConfig: InitialConfigType = {
+    editorState: null,
     namespace: "MyEditor",
     theme,
     nodes: [TableNode, TableCellNode, TableRowNode],
@@ -43,10 +60,28 @@ const Editor = () => {
     });
   };
 
+  const providerFactory = useCallback(
+    (id: string, yjsDocMap: Map<string, Y.Doc>): Provider => {
+      const doc = getDocFromMap(id, yjsDocMap);
+
+      return new WebsocketProvider(
+        "ws://localhost:1234",
+        id,
+        doc,
+      ) as unknown as Provider;
+    },
+    [],
+  );
+
   return (
     <>
       <LexicalComposer initialConfig={initialConfig}>
         <EditorRefPlugin editorRef={editorRef} />
+        <CollaborationPlugin
+          id="lexical/collab"
+          providerFactory={providerFactory}
+          shouldBootstrap={false}
+        />
         <RichTextPlugin
           contentEditable={<ContentEditable className="editor" />}
           placeholder={<div>Enter some text...</div>}
