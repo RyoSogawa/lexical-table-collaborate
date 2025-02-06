@@ -1,20 +1,25 @@
 import { AutoFocusPlugin } from "@lexical/react/LexicalAutoFocusPlugin";
-import { LexicalComposer } from "@lexical/react/LexicalComposer";
+import { InitialConfigType, LexicalComposer } from "@lexical/react/LexicalComposer";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
+import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
 import { LexicalErrorBoundary } from "@lexical/react/LexicalErrorBoundary";
 import { HistoryPlugin } from "@lexical/react/LexicalHistoryPlugin";
 import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { TablePlugin } from "@lexical/react/LexicalTablePlugin";
-import { TableCellNode, TableNode, TableRowNode } from "@lexical/table";
+import { INSERT_TABLE_COMMAND, TableCellNode, TableNode, TableRowNode } from "@lexical/table";
+import { EditorThemeClasses, LexicalEditor } from "lexical";
+import { useRef } from "react";
 
-const theme = {};
+const theme: EditorThemeClasses = {
+};
 
 const onError = (error: Error) => {
   console.error(error);
 };
 
 const Editor = () => {
-  const initialConfig = {
+  const editorRef = useRef<LexicalEditor>(null);
+  const initialConfig: InitialConfigType = {
     namespace: "MyEditor",
     theme,
     nodes: [
@@ -25,17 +30,29 @@ const Editor = () => {
     onError,
   };
 
+  const handleInsertTable = () => {
+    editorRef.current?.dispatchCommand(INSERT_TABLE_COMMAND, {
+      columns: "2",
+      rows: "2",
+      includeHeaders: true,
+    });
+  };
+
   return (
-    <LexicalComposer initialConfig={initialConfig}>
-      <RichTextPlugin
-        contentEditable={<ContentEditable className="editor" />}
-        placeholder={<div>Enter some text...</div>}
-        ErrorBoundary={LexicalErrorBoundary}
-      />
-      <HistoryPlugin />
-      <AutoFocusPlugin />
-      <TablePlugin />
-    </LexicalComposer>
+    <>
+        <LexicalComposer initialConfig={initialConfig}>
+        <EditorRefPlugin editorRef={editorRef} />
+        <RichTextPlugin
+            contentEditable={<ContentEditable className="editor" />}
+            placeholder={<div>Enter some text...</div>}
+            ErrorBoundary={LexicalErrorBoundary}
+        />
+        <HistoryPlugin />
+        <AutoFocusPlugin />
+        <TablePlugin />
+        </LexicalComposer>
+        <button onClick={handleInsertTable}>Insert Table</button>
+    </>
   );
 };
 
