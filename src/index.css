@@ -1,5 +1,5 @@
 #root {
-    padding: 20px;
+  padding: 20px;
 }
 
 .editor {
@@ -10,7 +10,8 @@
   table {
     border-collapse: collapse;
 
-    th, td {
+    th,
+    td {
       border: 1px solid #ccc;
       min-width: 100px;
       padding: 8px;
